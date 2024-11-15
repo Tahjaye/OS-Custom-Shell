@@ -1,7 +1,7 @@
 # C-Shell CLI Tool
 
 
-A command-line interface tool for performing various file operations across different operating systems (Windows, Linux, and macOS).
+A command-line interface tool for performing various file and directory operations across different operating systems (Windows, Linux, and macOS).
 
 ## Features
 
@@ -10,6 +10,11 @@ A command-line interface tool for performing various file operations across diff
   - Create files
   - Delete files
   - Rename files
+- Directory operations:
+  - make directory
+  - remove directory
+  - change directory
+- convenience operations (pwd, cat, echo)
 - Command piping
 - Interactive help system
 - Support for multiple file extensions (.txt, .pdf, .docx)
@@ -19,7 +24,7 @@ A command-line interface tool for performing various file operations across diff
 ##### 1. Ensure you have Python 3.x installed on your system
 ##### 2. Clone this repository:
 ```bash
-git clone https://github.com/geo-afk/custom-shell.git
+git clone https://github.com/Tahjaye/OS-Custom-Shell.git
 cd custom-shell
 ```
 
@@ -27,18 +32,31 @@ cd custom-shell
 
 Run the program:
 ```bash
-python main.py
+python Shell.py
 ```
 
 ### Available Commands
 
-- `create <filename>` - Create a new file
-- `delete <filename>` - Delete an existing file
-- `rename <filename>` - Rename an existing file (prompts for new name)
-- `help` - Display general help information
-- `help <command>` - Display help for a specific command
-- `c` - Clear the screen
-- `e` - Exit the program
+- File Operations:
+   - `create <filename>`: Create a new file.
+   - `delete <filename>`: Delete an existing file.
+   - `rename <old_filename> <new_filename>`: Rename an existing file (prompts for new name).
+
+- Directory Operations:
+   - `make <dir_name>`: Create a new directory.
+   - `remove <dir_name>`: Remove an existing directory.
+   - `change <dir_name>`: Change the current working directory.
+
+- Convenience Operations:
+   - `pwd`: Print the current working directory.
+   - `cat <filename>`: Display the contents of a file.
+   - `echo <text>`: Display the provided text.
+
+- General Commands:
+   - `help`: Display general help information.
+   - `help <command>`: Display help for a specific command.
+   - `c`: Clear the screen.
+   - `e`: Exit the program.
 
 ### Command Piping
 
@@ -55,12 +73,11 @@ Enter new filename: newtest.txt
 
 ## Project Structure
 
-- `main.py` - Entry point and main program loop
-- `compute.py` - Handles execution of file operations
-- `input_parser.py` - Parses and validates user input
-- `help_parser.py` - Manages the help system
-- `.\static\constant_types.py` - Defines constants, enums, and type definitions
-- `.\static\exceptions` - Definition of custom exceptions 
+- `Shell.py` - Entry point and main program loop.
+- `Commands.py` - Handles execution of commands.
+- `input_parser.py` - Parses and validates user input.
+- `.\static\constant_types.py` - Defines constants, enums, and type definitions.
+- `.\static\exceptions` - Definition of custom exceptions .
 - `.\static\help.json` - Stores the help details for command `General` `Specific`
 
 
@@ -96,15 +113,6 @@ The tool uses custom exceptions:
 - `InvalidCommand` - For invalid user inputs
 - `FileOperationError` - For file-related errors
 - `CommonException` - For general errors
-
-## Extending the Tool
-
-To add new file operations:
-##### 1. Add the operation to `FileOperation` enum in `constant_types.py` file
-##### 2. Add corresponding commands for each platform in `FILE_OPERATIONS`
-##### 3. Update the help system in the JSON file
-##### 4. Implement any necessary validation in `InputParser`
-
 
 ## Limitations
 
