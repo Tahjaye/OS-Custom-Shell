@@ -1,0 +1,29 @@
+{
+    "general": {
+        "create": "\nCreate a new file in the current directory:\nExample: create 'filename.txt'\n\nCurrent Directory:\n\t**** persons.txt ****\nCommand: create 'hardware.txt'\n\nUpdated Directory:\n\t**** persons.txt ****\n\t**** hardware.txt ****\n",
+        "delete": "\nDelete an existing file from the current directory:\nExample: delete 'filename.txt'\n\nCurrent Directory:\n\t**** hardware.txt ****\n\t**** persons.txt ****\nCommand: delete 'hardware.txt'\n\nUpdated Directory:\n\t**** persons.txt ****\n",
+        "rename": "\nRename a file in the current directory:\nExample: rename 'oldFileName' 'newFileName'\n\nCurrent Directory:\n\t**** persons.txt ****\n\t**** hardware.txt ****\nCommand: rename 'hardware.txt' 'mikes_hardware.txt'\n\nUpdated Directory:\n\t**** persons.txt ****\n\t**** mikes_hardware.txt ****\n",
+        "modify": "\nModify the permissions of a file:\n- Command: modify 'filename.txt' '<permission>'\n- Permissions: <read> or <write>\n\nCurrent Directory:\n\t**** persons.txt ****\n\t**** hardware.txt ****\n\nExample Command:\n\tmodify 'hardware.txt' 'write'\n\nUpdated Directory (permissions updated):\n\t**** persons.txt ****\n\t**** hardware.txt **** (write permission granted)\n",
+        "list": "\nList the attributes of files in the current directory:\n- Command: list\n\nCurrent Directory:\n\t**** persons.txt ****\n\t**** hardware.txt ****\n\nExample Command:\n\tlist\n\nOutput:\n\t**** persons.txt ****\n\t**** hardware.txt ****\n",
+        "change": "\nChange directory:\nExample: cd 'directory_name'\n",
+        "make": "\nMake a new directory:\nExample: mkdir 'directory_name'\n\nUpdated Directory:\n\tdirectory_name created\n",
+        "remove": "\nRemove a directory:\nExample: rmdir 'directory_name'\n\nUpdated Directory:\n\tdirectory_name removed\n",
+        "current": "\nShow current directory:\nCommand: cd\n\nCurrent Directory:\n\t`pwd`\n",
+        "move": "\nMove a file or directory:\nExample: move 'source' 'destination'\n\nUpdated Directory:\n\t'source' moved to 'destination'\n"
+        
+    },
+
+    "info": {
+        "create": "create: Use this command to create a new file named <file_name>",
+        "delete": "delete: Use this command to remove a file named <file_name>",
+        "rename": "rename: Use this command to change the name of a file from <file_name> to <new_file_name>",
+        "modify": "modify: Use this command to change the permissions of a file, specifying <read> or <write>",
+        "list": "list: Use this command to view the attributes of all files in your current directory",
+        "change": "cd: Use this command to change the current directory",
+        "make": "mkdir: Use this command to create a new directory named <directory_name>",
+        "remove": "rmdir: Use this command to remove a directory named <directory_name>",
+        "current": "pwd: Use this command to display the current directory", 
+        "move": "move: Use this command to move a file or directory from <source> to <destination>"   
+
+    }
+}
