@@ -5,7 +5,7 @@ import shlex
 
 ECHO = True
 OS_PLATFORM= cd.get_platform()
-CURRENT_DIRECTORY = cd.get_current_directory()
+CURRENT_DIRECTORY = cd.get_working_directory()
 
 def execute_command(command):
     tokens = shlex.split(command)
@@ -119,7 +119,7 @@ def shell():
     
     print("Welcome to the shell! Type 'help' for available commands or 'exit' to quit.")
     while True:
-        CURRENT_DIRECTORY = cd.get_current_directory()
+        CURRENT_DIRECTORY = cd.get_working_directory()
         if ECHO:
             command = input(f"{CURRENT_DIRECTORY}>> ")
         else:

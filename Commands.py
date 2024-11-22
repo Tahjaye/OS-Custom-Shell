@@ -1,6 +1,6 @@
 import os
 import stat
-import Shell as sh
+
 import static.constant_types as ct
 from sys import platform
 
@@ -19,13 +19,14 @@ def get_platform() -> ct.Platform:
 
     raise OSError("Unsupported operating system")
 
+
 def get_working_directory() -> str:
     """
     Gets the current working directory of the program
     """
 
     return os.getcwd()
-
+import Shell as sh
 def clear_screen():
     """
     The function `clear_screen()`\n
@@ -133,7 +134,7 @@ def echo(*args):
     elif len(args) ==2:
         print("Invalid number of arguments")
     elif len(args) == 3 and args[1] == ">":
-        if args[2] in ct.VALID_EXTENSIONS:
+        if args[2][-3:].lower() in ct.VALID_EXTENSIONS:
             try:
                 with open(args[2], 'w') as f:
                     f.write(args[0])
