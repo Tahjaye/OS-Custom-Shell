@@ -1,15 +1,133 @@
 {
-    "general":{
-
-        "create": "\ncommand is used to create a file:\nex: create 'filename.txt'\n\ndir:\n\t**** persons.txt ****\ncreate 'hardware.txt'\n\ndir:\n\t**** persons.txt ****\n\t**** hardware.txt ****\n",
-        "delete": "\ndelete: command is used to delete a file:\nex: delete 'filename.txt'\n\ndir:\n\t**** hardware.txt ****\n\t**** persons.txt ****\ndelete 'hardware.txt'\n\ndir:\n\t**** persons.txt ****\n",
-        "rename": "\nrename: command is used to rename a file: \nex: rename 'oldFileName' 'newFileName'\n\ndir:\n\t**** persons.txt ****\n\t**** hardware.txt ****\nrename 'hardware.txt' 'mikes_hardware.txt'\n\ndir:\n\t**** persons.txt ****\n\t**** mikes_hardware.txt ****\n"
+    "general_help": {
+        "create": "Creates a new file.",
+        "touch": "Creates a new file or updates the timestamp of an existing file.",
+        "exit": "Exits the shell.",
+        "cat": "Displays the contents of a file.",
+        "echo": "Prints arguments to the screen.",
+        "clear": "Clears the terminal screen.",
+        "current": "Displays the current working directory.",
+        "pwd": "Displays the current working directory.",
+        "help": "Displays help for commands.",
+        "delete": "Deletes a specified file.",
+        "rm": "Deletes a specified file.",
+        "rename": "Renames a file.",
+        "mv": "Renames a file.",
+        "make": "Creates a new directory.",
+        "mkdir": "Creates a new directory.",
+        "remove": "Removes a directory.",
+        "rmdir": "Removes a directory.",
+        "change": "Changes the current working directory.",
+        "cd": "Changes the current working directory.",
+        "modify": "Modifies file permissions.",
+        "chmod": "Modifies file permissions.",
+        "list": "Lists files and directories in the current directory.",
+        "ls": "Lists files and directories in the current directory.",
+        "dir": "Lists files and directories in the current directory.",
+        "set": "Sets an environment variable.",
+        "get": "Gets the value of an environment variable."
     },
+    "command_specific_help": {
+        "create": {
+            "description": "Creates a new file.",
+            "usage": "create <filename> or touch <filename>"
+        },
+        "exit": {
+            "description": "Exits the shell.",
+            "usage": "exit"
+        },
+        "cat": {
+            "description": "Displays the contents of a file.",
+            "usage": "cat <filename>"
+        },
+        "echo": {
+            "description": "Prints arguments to the screen.",
+            "usage": "echo <text> or echo <text> > <filename>"
 
-    "info":{
-        "create": "create: This command is used create file <file_name>",
-        "delete": "delete: This command is used to delete a file <file_name>",
-        "rename": "rename: This command is used to rename a file <file_name> <new_file_name>"
+        },
+        "clear": {
+            "description": "Clears the terminal screen.",
+            "usage": "clear"
+        },
+        "current": {
+            "description": "Displays the current working directory.",
+            "usage": "current"
+        },
+        "pwd": {
+            "description": "Displays the current working directory.",
+            "usage": "pwd"
+        },
+        "help": {
+            "description": "Displays help for commands.",
+            "usage": "help <command_name> or help"
+        },
+        "delete": {
+            "description": "Deletes a specified file.",
+            "usage": "delete <filename>"
+        },
+        "rm": {
+            "description": "Deletes a specified file.",
+            "usage": "rm <filename>"
+        },
+        "rename": {
+            "description": "Renames a file.",
+            "usage": "rename <old_filename> <new_filename>"
+        },
+        "mv": {
+            "description": "Renames a file.",
+            "usage": "mv <old_filename> <new_filename>"
+        },
+        "make": {
+            "description": "Creates a new directory.",
+            "usage": "make <directory_name>"
+        },
+        "mkdir": {
+            "description": "Creates a new directory.",
+            "usage": "mkdir <directory_name>"
+        },
+        "remove": {
+            "description": "Removes a directory.",
+            "usage": "remove <directory_name>"
+        },
+        "rmdir": {
+            "description": "Removes a directory.",
+            "usage": "rmdir <directory_name>"
+        },
+        "change": {
+            "description": "Changes the current working directory.",
+            "usage": "change <directory_name> or cd <directory_name>"
+        },
+        "cd": {
+            "description": "Changes the current working directory.",
+            "usage": "cd <directory_name>"
+        },
+        "modify": {
+            "description": "Modifies file permissions.",
+            "usage": "modify <permission> <filename> (valid permissions: +r, -r, +w, -w, +x, -x)"
+        },
+        "chmod": {
+            "description": "Modifies file permissions.",
+            "usage": "chmod <permission> <filename> (valid permissions: +r, -r, +w, -w, +x, -x)"
+        },
+        "list": {
+            "description": "Lists files and directories in the current directory.",
+            "usage": "list or ls or dir"
+        },
+        "ls": {
+            "description": "Lists files and directories in the current directory.",
+            "usage": "ls"
+        },
+        "dir": {
+            "description": "Lists files and directories in the current directory.",
+            "usage": "dir"
+        },
+        "set": {
+            "description": "Sets an environment variable.",
+            "usage": "set <variable_name> <value>"
+        },
+        "get": {
+            "description": "Gets the value of an environment variable.",
+            "usage": "get <variable_name>"
+        }
     }
-
 }

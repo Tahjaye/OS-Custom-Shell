@@ -8,12 +8,21 @@ OS_PLATFORM= cd.get_platform()
 CURRENT_DIRECTORY = cd.get_working_directory()
 
 def execute_command(command):
-    tokens = shlex.split(command)
-
-    if not tokens:
+    if "|" in command:
+        cd.pipe(command)
         return
 
-    cmd, *args = tokens # unpacks the first element of the list into cmd and the rest into args
+    if "<" in command:
+        cmd, *args = cd.handle_input_redirection(command)
+    else:
+        tokens = shlex.split(command)
+
+        if not tokens:
+            return
+
+        cmd, *args = tokens # unpacks the first element of the list into cmd and the rest into args
+
+    
     cmd = cmd.lower()# makes the shell case-insensitive
     if (cmd == "create" or cmd=="touch") and len(args) == 1:
         cd.create_file(args[0])
@@ -29,10 +38,12 @@ def execute_command(command):
     elif (cmd =="current" or cmd == "pwd")and len(args) == 0:
         cd.current_working_directory()
     elif cmd == "help" and len(args) <= 1:
-        if len(args) == 1:
-            cd.print_help(args[0])
-        elif len(args) == 0:
-            cd.print_help()
+        cd.print_help(args)
+        
+        # if len(args) == 1:
+        #     cd.print_help(args[0])
+        # elif len(args) == 0:
+        #     cd.print_help()
     elif (cmd == "delete" or cmd == "rm") and len(args) == 1:
         cd.delete_file(args[0])
     elif (cmd == "rename"or cmd=="mv") and len(args) == 2:
@@ -77,48 +88,11 @@ def execute_command(command):
         print("Type 'help' for available commands.")
         
 
-def process_io_redirection(command) -> str:
-    """
-    Processes a command with `<` for input redirection and replaces the file path
-    with the file's contents in place.
-
-    Args:
-        command (str): The command string, e.g., "echo < test.txt".
-
-    Returns:
-        str: The command with the file contents replacing the file path.
-        eg. echo "Hello, World!"
-    """
-    try:
-        # Check if the command contains the input redirection operator
-        if '<' in command:
-            # Split the command by '<' to get the base command and the file path
-            base_command, file_path = command.split('<', 1)
-
-            # Strip any leading/trailing whitespace around the parts
-            base_command = base_command.strip()
-            file_path = file_path.strip()
-
-            # Read the contents of the file
-            with open(file_path, 'r') as file:
-                file_contents = file.read().strip()
-
-            # Return the reconstructed command with the file contents
-            return f"{base_command} {file_contents}"
-        else:
-            return command  # No redirection to process
-
-    except FileNotFoundError:
-        return f"Error: File '{file_path}' not found."
-    except PermissionError:
-        return f"Error: Permission denied for file '{file_path}'."
-    except Exception as e:
-        return f"Error processing command: {e}"
-
 def shell():
     
     print("Welcome to the shell! Type 'help' for available commands or 'exit' to quit.")
     while True:
+        print("\n") # Print a newline for better readability
         CURRENT_DIRECTORY = cd.get_working_directory()
         if ECHO:
             command = input(f"{CURRENT_DIRECTORY}>> ")

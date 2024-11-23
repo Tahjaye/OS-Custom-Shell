@@ -1,8 +1,10 @@
 import os
 import stat
-
+import json
+import subprocess
 import static.constant_types as ct
 from sys import platform
+import shlex
 
 def get_platform() -> ct.Platform:
     """
@@ -134,22 +136,26 @@ def echo(*args):
     elif len(args) ==2:
         print("Invalid number of arguments")
     elif len(args) == 3 and args[1] == ">":
-        if args[2][-3:].lower() in ct.VALID_EXTENSIONS:
+        if is_valid_extension(args[2]):
             try:
                 with open(args[2], 'w') as f:
                     f.write(args[0])
             except FileNotFoundError:
                 print(f"File '{args[2]}' not found.")
         else:
+            print(args[2][-3:].lower())
             print("Invalid file extension.")
     else:
         print("Invalid arguments.")
         
 
 def list_sub_directories():
+    # List the contents of the current directory
     for item in os.listdir('.'):
         if os.path.isdir(item):
-            print(item)
+            print(f"{item}/")  # Append '/' to directories to mimic `ls`
+        else:
+            print(item)  # Print files as they are
 
 def change_file_permissions(file_path, read_only=False, executable=False):
     """
@@ -192,26 +198,99 @@ def change_file_permissions(file_path, read_only=False, executable=False):
         print(f"Unexpected error: {e}")
 
 
-
-
-
-#These functions were carried over and may need to be implemented if not else where
-
-def handle_help():
-    """
-        This function is used to handle the help command
-        when the user request any help information
-        whether it is general help
-        or specific help
-        for a command.
-        :param parsed_input: List of parsed words from user input.
-    """
-
-def handle_file_operation(parsed_input: list[str]):
-    """
-        This function handles the file operation/s that the user is requesting to do
-        whether [create, delete, rename].
-        :param operating_system: The operating system that the user ran the program on.
-        :param parsed_input: List of parsed words from user input.
-    """
+def print_help(args):
+    # Load the help data from the JSON file
+    with open('static/help.json', 'r') as json_file:
+        help_data = json.load(json_file)
     
+    # If the args list is empty, print the general help section
+    if not args:
+        print("General Help:\n")
+        for command, description in help_data["general_help"].items():
+            print(f"{command}: {description}")
+    # If the args list contains one command, print specific help for that command
+    elif len(args) == 1:
+        command = args[0]
+        if command in help_data["command_specific_help"]:
+            print(f"Help for {command}:\n")
+            command_help = help_data["command_specific_help"][command]
+            print(f"Description: {command_help['description']}")
+            print(f"Usage: {command_help['usage']}")
+        else:
+            print(f"No help available for command: {command}")
+    else:
+        print("Invalid arguments. Please provide either no arguments or one command.")
+
+
+
+def is_valid_extension(filename,):
+    # Extract the file extension (e.g., '.jpg', '.png')
+    file_extension = os.path.splitext(filename)[1].lower()  # Normalize to lowercase for case-insensitivity
+    
+    # Check if the file extension is in the valid extensions list
+    return file_extension in [ext.lower() for ext in ct.VALID_EXTENSIONS]
+
+# Function to execute a single command
+def execute_command(cmd):
+    # Split the command into arguments (using shlex.split for proper parsing)
+    cmd_parts = cmd.strip().split()
+    
+    # If running Windows commands, ensure we run via cmd.exe
+    process = subprocess.Popen(cmd_parts, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    output, error = process.communicate()
+
+    # Handle errors if any
+    if error:
+        print(f"Error in command '{cmd}': {error.decode()}")
+        return None
+    
+    return output
+
+# Function to simulate piping of multiple commands
+def pipe(command_string):
+    # Split the commands by the pipe symbol '|'
+    commands = command_string.split('|')
+
+    # Initialize a variable to hold the output of the previous command
+    input_data = None
+
+    # Loop through each command and execute them
+    for i, cmd in enumerate(commands):
+        # If this is not the first command, pass the previous output as input
+        if input_data:
+            process = subprocess.Popen(cmd.strip().split(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            input_data, error = process.communicate(input=input_data)
+        else:
+            # For the first command, execute it without any input
+            input_data = execute_command(cmd)
+
+        # If the last command, print the output
+        if i == len(commands) - 1:
+            print(input_data.decode())
+
+def handle_input_redirection(command_string):
+    # Check if the '<' character is in the command (indicating input redirection)
+    if '<' in command_string:
+        # Split the command at '<' to separate the command and the filename
+        parts = command_string.split('<')
+        
+        # Strip extra spaces from the command and filename
+        cmd = parts[0].strip()
+        filename = parts[1].strip()
+
+        # Read the file contents
+        try:
+            with open(filename, 'r') as file:
+                file_contents = file.read()
+                
+            # Return the command with the file contents inserted as input
+            return cmd, file_contents
+        except FileNotFoundError:
+            print(f"Error: File '{filename}' not found.")
+            return None, None
+        except Exception as e:
+            print(f"Error reading file '{filename}': {str(e)}")
+            return None, None
+    else:
+        # No input redirection; return the command as is
+        return command_string, None
