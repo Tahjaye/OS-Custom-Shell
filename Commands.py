@@ -1,8 +1,11 @@
 import os
 import stat
+from pathlib import Path
 
 import static.constant_types as ct
+from static.help_loader import LoadHelp
 from sys import platform
+
 
 def get_platform() -> ct.Platform:
     """
@@ -26,7 +29,21 @@ def get_working_directory() -> str:
     """
 
     return os.getcwd()
+
+
+def print_help(command: str | None = None):
+    help_info = LoadHelp("./static/help.json")
+    help_details = help_info.get_help_info(command)
+
+    magenta = ct.ConsoleColors.get("MAGENTA")
+    reset = ct.ConsoleColors.get("RESET")
+
+    print(f"\n{magenta}{help_details}{reset}\n")
+
+
 import Shell as sh
+
+
 def clear_screen():
     """
     The function `clear_screen()`\n
@@ -34,6 +51,7 @@ def clear_screen():
     """
 
     os.system("cls" if os.name == "nt" else "clear")
+
 
 def cat_file(file_path):
     """
@@ -44,9 +62,9 @@ def cat_file(file_path):
     """
     try:
         # Open the file and read its content
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             for line in file:
-                print(line, end='')  # Avoid double newlines
+                print(line, end="")  # Avoid double newlines
     except FileNotFoundError:
         print(f"cat: {file_path}: No such file or directory")
     except PermissionError:
@@ -56,9 +74,10 @@ def cat_file(file_path):
 
 
 def create_file(file_name):
-    with open(file_name, 'w') as f:
+    with open(file_name, "w") as f:
         pass
     print(f"File '{file_name}' created.")
+
 
 def delete_file(file_name):
     try:
@@ -67,6 +86,7 @@ def delete_file(file_name):
     except FileNotFoundError:
         print(f"File '{file_name}' not found.")
 
+
 def rename_file(old_name, new_name):
     try:
         os.rename(old_name, new_name)
@@ -74,12 +94,15 @@ def rename_file(old_name, new_name):
     except FileNotFoundError:
         print(f"File '{old_name}' not found.")
 
+
 def make_directory(dir_name):
+    tpath = Path(dir_name)
     try:
-        os.makedirs(dir_name)
+        path.mkdir(parents=True, exist_ok=True)
         print(f"Directory '{dir_name}' created.")
-    except FileExistsError:
-        print(f"Directory '{dir_name}' already exists.")
+    except Exception as e:
+        print(f"Error creating directory '{dir_name}': {e}")
+
 
 def remove_directory(dir_name):
     try:
@@ -90,6 +113,7 @@ def remove_directory(dir_name):
     except OSError:
         print(f"Directory '{dir_name}' is not empty.")
 
+
 def change_directory(dir_name):
     try:
         os.chdir(dir_name)
@@ -99,15 +123,17 @@ def change_directory(dir_name):
 
 
 def list_permissions():
-    for item in os.listdir('.'):
+    for item in os.listdir("."):
         stats = os.stat(item)
         permissions = stat.filemode(stats.st_mode)
         file_size = stats.st_size
         print(f"{permissions} {file_size} {item}")
 
+
 def set_env_var(var_name, value):
     os.environ[var_name] = value
     print(f"Environment variable '{var_name}' set to '{value}'.")
+
 
 def get_env_var(var_name):
     value = os.environ.get(var_name)
@@ -116,12 +142,14 @@ def get_env_var(var_name):
     else:
         print(f"Environment variable '{var_name}' not set.")
 
+
 def current_working_directory():
     print(f"Current working directory: {os.getcwd()}")
 
+
 def echo(*args):
-    if len(args) == 0 :
-        print("Echo is "+ "on" if sh.ECHO else "off")
+    if len(args) == 0:
+        print("Echo is " + "on" if sh.ECHO else "off")
     elif len(args) == 1:
         if args[0] == "on":
             sh.ECHO = True
@@ -131,12 +159,12 @@ def echo(*args):
             print("Echo is off")
         else:
             print(args[0])
-    elif len(args) ==2:
+    elif len(args) == 2:
         print("Invalid number of arguments")
     elif len(args) == 3 and args[1] == ">":
         if args[2][-3:].lower() in ct.VALID_EXTENSIONS:
             try:
-                with open(args[2], 'w') as f:
+                with open(args[2], "w") as f:
                     f.write(args[0])
             except FileNotFoundError:
                 print(f"File '{args[2]}' not found.")
@@ -144,12 +172,13 @@ def echo(*args):
             print("Invalid file extension.")
     else:
         print("Invalid arguments.")
-        
+
 
 def list_sub_directories():
-    for item in os.listdir('.'):
+    for item in os.listdir("."):
         if os.path.isdir(item):
             print(item)
+
 
 def change_file_permissions(file_path, read_only=False, executable=False):
     """
@@ -183,35 +212,12 @@ def change_file_permissions(file_path, read_only=False, executable=False):
 
         # Print a success message
         print(f"Permissions for '{file_path}' updated successfully.")
-        print(f"Read-only: {'Enabled' if read_only else 'Disabled'}, Executable: {'Enabled' if executable else 'Disabled'}")
+        print(
+            f"Read-only: {'Enabled' if read_only else 'Disabled'}, Executable: {'Enabled' if executable else 'Disabled'}"
+        )
     except FileNotFoundError:
         print(f"Error: File '{file_path}' not found.")
     except PermissionError:
         print(f"Error: Permission denied when modifying '{file_path}'.")
     except Exception as e:
         print(f"Unexpected error: {e}")
-
-
-
-
-
-#These functions were carried over and may need to be implemented if not else where
-
-def handle_help():
-    """
-        This function is used to handle the help command
-        when the user request any help information
-        whether it is general help
-        or specific help
-        for a command.
-        :param parsed_input: List of parsed words from user input.
-    """
-
-def handle_file_operation(parsed_input: list[str]):
-    """
-        This function handles the file operation/s that the user is requesting to do
-        whether [create, delete, rename].
-        :param operating_system: The operating system that the user ran the program on.
-        :param parsed_input: List of parsed words from user input.
-    """
-    

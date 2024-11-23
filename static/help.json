@@ -1,15 +1,26 @@
 {
-    "general":{
-
-        "create": "\ncommand is used to create a file:\nex: create 'filename.txt'\n\ndir:\n\t**** persons.txt ****\ncreate 'hardware.txt'\n\ndir:\n\t**** persons.txt ****\n\t**** hardware.txt ****\n",
-        "delete": "\ndelete: command is used to delete a file:\nex: delete 'filename.txt'\n\ndir:\n\t**** hardware.txt ****\n\t**** persons.txt ****\ndelete 'hardware.txt'\n\ndir:\n\t**** persons.txt ****\n",
-        "rename": "\nrename: command is used to rename a file: \nex: rename 'oldFileName' 'newFileName'\n\ndir:\n\t**** persons.txt ****\n\t**** hardware.txt ****\nrename 'hardware.txt' 'mikes_hardware.txt'\n\ndir:\n\t**** persons.txt ****\n\t**** mikes_hardware.txt ****\n"
+    "general": {
+        "create": "\nCreate a new file in the current directory:\nExample: create 'filename.txt'\n\nCurrent Directory:\n\t**** persons.txt ****\nCommand: create 'hardware.txt'\n\nUpdated Directory:\n\t**** persons.txt ****\n\t**** hardware.txt ****\n",
+        "delete": "\nDelete an existing file from the current directory:\nExample: delete 'filename.txt'\n\nCurrent Directory:\n\t**** hardware.txt ****\n\t**** persons.txt ****\nCommand: delete 'hardware.txt'\n\nUpdated Directory:\n\t**** persons.txt ****\n",
+        "rename": "\nRename a file in the current directory:\nExample: rename 'oldFileName' 'newFileName'\n\nCurrent Directory:\n\t**** persons.txt ****\n\t**** hardware.txt ****\nCommand: rename 'hardware.txt' 'mikes_hardware.txt'\n\nUpdated Directory:\n\t**** persons.txt ****\n\t**** mikes_hardware.txt ****\n",
+        "modify": "\nModify the permissions of a file:\n- Command: modify 'filename.txt' '<permission>'\n- Permissions: <read> or <write>\n\nCurrent Directory:\n\t**** persons.txt ****\n\t**** hardware.txt ****\n\nExample Command:\n\tmodify 'hardware.txt' 'write'\n\nUpdated Directory (permissions updated):\n\t**** persons.txt ****\n\t**** hardware.txt **** (write permission granted)\n",
+        "list": "\nList the attributes of files in the current directory:\n- Command: list\n\nCurrent Directory:\n\t**** persons.txt ****\n\t**** hardware.txt ****\n\nExample Command:\n\tlist\n\nOutput:\n\t**** persons.txt ****\n\t**** hardware.txt ****\n",
+        "change": "\nChange to a different directory:\nExample: cd 'directory_name'\n\nCurrent Directory:\n\t**** /home/user ****\nCommand: cd 'Documents'\n\nUpdated Directory:\n\t**** /home/user/Documents ****\n",
+        "make": "\nCreate a new directory:\nExample: mkdir 'directory_name'\n\nCurrent Directory:\n\t**** /home/user ****\nCommand: mkdir 'Projects'\n\nUpdated Directory:\n\t**** /home/user/Projects created ****\n",
+        "remove": "\nRemove an existing directory:\nExample: rmdir 'directory_name'\n\nCurrent Directory:\n\t**** /home/user ****\nCommand: rmdir 'Projects'\n\nUpdated Directory:\n\t**** /home/user/Projects removed ****\n",
+        "pwd": "\nDisplay the current directory:\nCommand: pwd\n\nExample Output:\n\tCurrent Directory:\n\t**** /home/user ****\n"
     },
 
-    "info":{
-        "create": "create: This command is used create file <file_name>",
-        "delete": "delete: This command is used to delete a file <file_name>",
-        "rename": "rename: This command is used to rename a file <file_name> <new_file_name>"
-    }
+    "info": {
+        "create": "Use this command to create a new file named <file_name>",
+        "delete": "Use this command to remove a file named <file_name>",
+        "rename": "Use this command to change the name of a file from <file_name> to <new_file_name>",
+        "modify": "Use this command to change the permissions of a file, specifying <read> or <write>",
+        "list": "Use this command to view the attributes of all files in your current directory",
+        "change": "Use this command to change the current directory",
+        "make": "Use this command to create a new directory named <directory_name>",
+        "remove": "Use this command to remove a directory named <directory_name>",
+        "pwd": "Use this command to display the current directory"
 
+    }
 }

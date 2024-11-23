@@ -1,130 +1,103 @@
-import Commands as cd
-import os
-import subprocess
 import shlex
+import Commands as cd
+from piping_redirect import CommandExecutor
 
 ECHO = True
-OS_PLATFORM= cd.get_platform()
+OS_PLATFORM = cd.get_platform()
 CURRENT_DIRECTORY = cd.get_working_directory()
+
+VALID_PERMISSIONS = {"+r", "-r", "+w", "-w", "+x", "-x"}
+
+
+def handle_file_permissions(args):
+    if args[0] not in VALID_PERMISSIONS:
+        print("Invalid permissions. Permissions must be one of +r, -r, +w, -w, +x, -x.")
+        return False
+    permissions_map = {
+        "+r": (True, False),
+        "-r": (False, False),
+        "+w": (False, False),
+        "-w": (True, False),
+        "+x": (False, True),
+        "-x": (False, False),
+    }
+    read_only, executable = permissions_map.get(args[0], (None, None))
+    cd.change_file_permissions(args[1], read_only, executable)  # type: ignore
+    return True
+
 
 def execute_command(command):
     tokens = shlex.split(command)
-
     if not tokens:
         return
 
-    cmd, *args = tokens # unpacks the first element of the list into cmd and the rest into args
-    cmd = cmd.lower()# makes the shell case-insensitive
-    if (cmd == "create" or cmd=="touch") and len(args) == 1:
-        cd.create_file(args[0])
-    elif cmd == "exit":
-        print("Exiting shell.")
-        exit(0)
-    elif cmd == "cat" and len(args) == 1:
-        cd.cat_file(args[0])
-    elif cmd == "echo":
-        cd.echo(*args)
-    elif cmd == "clear":
-        cd.clear_screen()
-    elif (cmd =="current" or cmd == "pwd")and len(args) == 0:
-        cd.current_working_directory()
-    elif cmd == "help" and len(args) <= 1:
-        if len(args) == 1:
-            cd.print_help(args[0])
-        elif len(args) == 0:
-            cd.print_help()
-    elif (cmd == "delete" or cmd == "rm") and len(args) == 1:
-        cd.delete_file(args[0])
-    elif (cmd == "rename"or cmd=="mv") and len(args) == 2:
-        cd.rename_file(args[0], args[1])
-    elif (cmd == "make" or cmd =="mkdir") and len(args) == 1:
-        cd.make_directory(args[0])
-    elif (cmd == "remove" or cmd == "rmdir") and len(args) == 1:
-        cd.remove_directory(args[0])
-    elif (cmd == "change" or cmd =="cd") and len(args) <= 1:
-        if len(args) == 0:
-            cd.current_working_directory()
-        elif len(args) == 1:
-            cd.change_directory(args[0])
-    elif (cmd == "modify" or cmd == "chmod") and len(args) == 2:
-        if args[0] not in ["+r", "-r", "+w", "-w", "+x", "-x"]:
-            print("Invalid permissions. Permissions must be one of +r, -r, +w, -w, +x, -x.")
-            return
+    if any(token in ["<", ">", ">>", "|"] for token in tokens):
+        check_redirect = CommandExecutor(command)
+        check_redirect.execute()
+        return
+
+    cmd, *args = tokens
+    cmd = cmd.lower()
+
+    commands = {
+        "create": cd.create_file,
+        "touch": cd.create_file,
+        "exit": lambda: (print("Exiting shell."), exit(0)),
+        "cat": cd.cat_file,
+        "echo": cd.echo,
+        "clear": cd.clear_screen,
+        "current": cd.current_working_directory,
+        "pwd": cd.current_working_directory,
+        "help": lambda: cd.print_help(args[0] if args else None),
+        "delete": cd.delete_file,
+        "rm": cd.delete_file,
+        "rename": cd.rename_file,
+        "mv": cd.rename_file,
+        "make": cd.make_directory,
+        "mkdir": cd.make_directory,
+        "remove": cd.remove_directory,
+        "rmdir": cd.remove_directory,
+        "change": cd.current_working_directory,
+        "cd": cd.change_directory,
+        "modify": lambda: handle_file_permissions(args),
+        "chmod": lambda: handle_file_permissions(args),
+        "list": lambda: cd.list_permissions() if args == ["-l"] else None,
+        "set": cd.set_env_var,
+        "get": cd.get_env_var,
+        "ls": cd.list_sub_directories,
+        "dir": cd.list_sub_directories,
+    }
+
+    if cmd in commands:
+        # Check if the command should be executed with no arguments
+        if cmd in {"clear", "exit", "help"}:
+            if len(args) == 0:
+                commands[cmd]()
+            else:
+                print(f"Invalid arguments for {cmd}.")
+        elif cmd in {"modify", "chmod", "set", "get"}:
+            if len(args) == 1 or len(args) == 0:
+                commands[cmd]()
+            else:
+                print("Invalid number of arguments.")
         else:
-            match(args[0]):
-                case "+r":
-                    cd.change_file_permissions(args[1], read_only=True, executable=False)
-                case "-r":
-                    cd.change_file_permissions(args[1], read_only=False, executable=False)
-                case "+w":
-                    cd.change_file_permissions(args[1], read_only=False, executable=False)
-                case "-w":
-                    cd.change_file_permissions(args[1], read_only=True, executable=False)
-                case "+x":
-                    cd.change_file_permissions(args[1], read_only=False, executable=True)
-                case "-x":
-                    cd.change_file_permissions(args[1], read_only=False, executable=False)
-    elif cmd == "list" and len(args)==1 and args[0] == ["-l"]:
-        cd.list_permissions()
-    elif cmd == "set" and len(args) == 2:
-        cd.set_env_var(args[0], args[1])
-    elif cmd == "get" and len(args) == 1:
-        cd.get_env_var(args[0])
-    elif (cmd == "ls" or cmd =="dir") and len(args) == 0:
-        cd.list_sub_directories()
+            if len(args) == 1 or len(args) == 2:
+                commands[cmd](*args)
+            else:
+                print(f"Invalid arguments for {cmd}.")
     else:
         print(f"Unrecognized command: {command}, command or argument/s are incorrect.")
         print("Type 'help' for available commands.")
-        
 
-def process_io_redirection(command) -> str:
-    """
-    Processes a command with `<` for input redirection and replaces the file path
-    with the file's contents in place.
-
-    Args:
-        command (str): The command string, e.g., "echo < test.txt".
-
-    Returns:
-        str: The command with the file contents replacing the file path.
-        eg. echo "Hello, World!"
-    """
-    try:
-        # Check if the command contains the input redirection operator
-        if '<' in command:
-            # Split the command by '<' to get the base command and the file path
-            base_command, file_path = command.split('<', 1)
-
-            # Strip any leading/trailing whitespace around the parts
-            base_command = base_command.strip()
-            file_path = file_path.strip()
-
-            # Read the contents of the file
-            with open(file_path, 'r') as file:
-                file_contents = file.read().strip()
-
-            # Return the reconstructed command with the file contents
-            return f"{base_command} {file_contents}"
-        else:
-            return command  # No redirection to process
-
-    except FileNotFoundError:
-        return f"Error: File '{file_path}' not found."
-    except PermissionError:
-        return f"Error: Permission denied for file '{file_path}'."
-    except Exception as e:
-        return f"Error processing command: {e}"
 
 def shell():
-    
     print("Welcome to the shell! Type 'help' for available commands or 'exit' to quit.")
     while True:
         CURRENT_DIRECTORY = cd.get_working_directory()
-        if ECHO:
-            command = input(f"{CURRENT_DIRECTORY}>> ")
-        else:
-            command = input()
+        command = input(f"{CURRENT_DIRECTORY}>> ") if ECHO else input()
+
         execute_command(command)
+
 
 if __name__ == "__main__":
     shell()
