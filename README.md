@@ -25,7 +25,7 @@ A command-line interface tool for performing various file and directory operatio
 ##### 2. Clone this repository:
 ```bash
 git clone https://github.com/Tahjaye/OS-Custom-Shell.git
-cd custom-shell
+cd OS-Custom-Shell
 ```
 
 ## Usage
